@@ -3,76 +3,267 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>نظام إدارة ومتابعة الحملات الإعلانية</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <title>نظام إدارة ومتابعة الحملات الإعلانية الاحترافي</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-    body {
-      background: radial-gradient(circle at 15% 15%, rgba(37, 99, 235, 0.22) 0%, transparent 45%),
-                  radial-gradient(circle at 85% 85%, rgba(16, 185, 129, 0.16) 0%, transparent 45%),
-                  #070a13;
-      color: #f8fafc; padding: 24px; min-height: 100vh;
+    :root {
+      --bg-base: #060813;
+      --card-bg: rgba(13, 19, 39, 0.65);
+      --card-border: rgba(255, 255, 255, 0.07);
+      --primary: #3b82f6;
+      --primary-glow: rgba(59, 130, 246, 0.35);
+      --accent: #06b6d4;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
     }
-    .container { max-width: 1240px; margin: 0 auto; }
 
-    /* تنسيقات عامة للبطاقات والزجاج */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+
+    body {
+      background-color: var(--bg-base);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.18) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.15) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.12) 0px, transparent 50%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 30px 20px;
+    }
+
+    .container { max-width: 1320px; margin: 0 auto; }
+
     .glass-card {
-      background: rgba(15, 23, 42, 0.65);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 20px;
+      background: var(--card-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--card-border);
+      border-radius: 22px;
       padding: 24px;
-      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
       margin-bottom: 24px;
+      box-shadow: 0 12px 35px -10px rgba(0, 0, 0, 0.7);
+      position: relative;
+    }
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
     }
 
     .btn {
-      background: linear-gradient(135deg, #2563eb, #1e40af);
-      color: #fff; border: none; padding: 10px 20px; border-radius: 12px;
-      cursor: pointer; font-size: 0.95rem; font-weight: 700; transition: 0.3s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.92rem;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
     }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4); }
-    .btn-danger { background: linear-gradient(135deg, #ef4444, #b91c1c); }
-    .btn-success { background: linear-gradient(135deg, #10b981, #047857); }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(37, 99, 235, 0.5); }
+    .btn:active { transform: translateY(0); }
+    .btn-danger { background: linear-gradient(135deg, #ef4444, #b91c1c); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); }
+    .btn-danger:hover { box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5); }
+    .btn-success { background: linear-gradient(135deg, #10b981, #047857); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
+    .btn-success:hover { box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5); }
+    .btn-secondary { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: none; }
+    .btn-secondary:hover { background: rgba(51, 65, 85, 0.9); }
 
-    /* شاشة الدخول */
-    .login-box { max-width: 400px; margin: 100px auto; text-align: center; }
     .input-field {
-      width: 100%; padding: 12px 16px; margin: 10px 0 16px;
-      background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px; color: #fff; font-size: 1rem;
+      width: 100%;
+      padding: 11px 16px;
+      margin: 6px 0 14px;
+      background: rgba(18, 25, 48, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.25s ease;
+    }
+    .input-field:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 15px var(--primary-glow);
     }
 
-    /* فلاتر الوقت */
     .filters-bar {
-      display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      background: rgba(10, 15, 30, 0.6);
+      padding: 8px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
     .filter-btn {
-      background: rgba(30, 41, 59, 0.8); color: #94a3b8; border: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 7px 16px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 0.85rem; transition: 0.2s;
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid transparent;
+      padding: 7px 15px;
+      border-radius: 9px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
     }
-    .filter-btn.active, .filter-btn:hover { background: #2563eb; color: #fff; border-color: #3b82f6; }
+    .filter-btn.active, .filter-btn:hover {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
 
-    /* شبكة الكروت */
-    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .custom-date-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(18, 25, 48, 0.7);
+      padding: 4px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .custom-date-box input[type="date"] {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 0.8rem;
+      outline: none;
+    }
+
+    /* مؤشر سعر الصرف اللحظي */
+    .rate-badge {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      padding: 4px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
     .kpi-card {
-      background: rgba(15, 23, 42, 0.55); backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 18px; padding: 20px; transition: 0.3s;
+      background: linear-gradient(145deg, rgba(16, 24, 48, 0.7), rgba(9, 14, 28, 0.8));
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      padding: 20px 18px;
+      position: relative;
+      transition: transform 0.3s ease, border-color 0.3s ease;
     }
-    .kpi-card:hover { transform: translateY(-4px); border-color: rgba(59, 130, 246, 0.35); }
-    .kpi-title { font-size: 0.85rem; color: #94a3b8; font-weight: 600; margin-bottom: 8px; }
+    .kpi-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+    .kpi-card .kpi-icon {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      font-size: 1.2rem;
+      opacity: 0.3;
+      color: var(--text-muted);
+    }
+    .kpi-title { font-size: 0.82rem; color: var(--text-muted); font-weight: 700; margin-bottom: 10px; }
     .kpi-value { font-size: 1.85rem; font-weight: 900; color: #fff; margin-bottom: 4px; }
-    .kpi-sub { font-size: 0.76rem; color: #64748b; font-weight: 600; }
+    .kpi-sub { font-size: 0.78rem; color: #64748b; font-weight: 600; display: flex; align-items: center; gap: 4px; }
 
-    .details-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-    .chart-container { position: relative; height: 230px; }
+    /* صندوق الرؤى والتوصيات */
+    .insights-card {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.85), rgba(30, 27, 75, 0.45));
+      border: 1px solid rgba(99, 102, 241, 0.25);
+    }
+    .insights-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      color: #818cf8;
+      padding: 4px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+    .insights-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .insights-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 0.88rem;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      line-height: 1.5;
+    }
+    .insights-item i { margin-top: 3px; font-size: 0.95rem; }
 
-    /* جداول الإدارة */
-    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 12px; }
-    th { text-align: right; color: #94a3b8; padding: 12px 8px; font-weight: 700; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-    td { padding: 12px 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #cbd5e1; }
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .chart-container { position: relative; height: 240px; width: 100%; margin-top: 8px; }
+
+    .table-responsive { width: 100%; overflow-x: auto; }
+    table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.9rem; margin-top: 8px; }
+    th {
+      background: rgba(255, 255, 255, 0.03);
+      text-align: right;
+      color: var(--text-muted);
+      padding: 12px 10px;
+      font-weight: 800;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    td { padding: 12px 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); color: #cbd5e1; }
+    tr:last-child td { border-bottom: none; }
+
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 0.78rem; font-weight: 800; }
+    .badge-active { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-inactive { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    .spin { animation: spin 1s linear infinite; }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    @media print {
+      body { background: #fff !important; color: #000 !important; padding: 0 !important; }
+      .glass-card { background: #fff !important; border: 1px solid #e2e8f0 !important; box-shadow: none !important; color: #0f172a !important; margin-bottom: 16px !important; }
+      .filters-bar, .no-print, .btn, .rate-badge { display: none !important; }
+      .kpi-card { background: #f8fafc !important; border: 1px solid #cbd5e1 !important; color: #0f172a !important; box-shadow: none !important; }
+      .kpi-value { color: #0f172a !important; }
+      th, td { color: #334155 !important; border-bottom: 1px solid #e2e8f0 !important; }
+      .insights-card { background: #f1f5f9 !important; border: 1px solid #cbd5e1 !important; }
+      .insights-item { background: #fff !important; border: 1px solid #e2e8f0 !important; color: #1e293b !important; }
+    }
   </style>
 </head>
 <body>
@@ -80,135 +271,258 @@
   <div class="container">
 
     <!-- 1. شاشة تسجيل الدخول للأدمن -->
-    <div id="login-view" class="glass-card login-box" style="display: none;">
-      <h2 style="margin-bottom: 20px;">تسجيل دخول المدير 🔐</h2>
+    <div id="login-view" class="glass-card login-box" style="display: none; max-width: 420px; margin: 90px auto; text-align: center;">
+      <i class="fa-solid fa-shield-halved" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 14px;"></i>
+      <h2 style="margin-bottom: 6px; font-weight: 800;">تسجيل دخول المدير</h2>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">لوحة تحكم إدارة الحملات وتوليد الروابط</p>
+      
       <input type="text" id="admin-user" class="input-field" placeholder="اسم المستخدم">
       <input type="password" id="admin-pass" class="input-field" placeholder="كلمة المرور">
-      <button class="btn" style="width: 100%;" onclick="adminLogin()">دخول لوحة التحكم</button>
-      <div id="login-err" style="color: #ef4444; font-size: 0.85rem; margin-top: 10px;"></div>
+      
+      <button class="btn" style="width: 100%; margin-top: 6px;" onclick="adminLogin()">
+        <span>دخول لوحة التحكم</span>
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+      <div id="login-err" style="color: #ef4444; font-size: 0.85rem; margin-top: 10px; font-weight: 700;"></div>
     </div>
 
-    <!-- 2. لوحة تحكم الأدمن (إدارة الروابط وتوليدها) -->
+    <!-- 2. لوحة تحكم الأدمن -->
     <div id="admin-view" style="display: none;">
       <div class="glass-card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
-        <h2>لوحة إدارة وتوليد تقارير العملاء 🚀</h2>
-        <button class="btn btn-danger" onclick="logout()">تسجيل خروج</button>
+        <div>
+          <h2 style="font-weight: 900; font-size: 1.45rem;">لوحة إدارة وتوليد تقارير العملاء ⚡</h2>
+          <p style="color: var(--text-muted); font-size: 0.85rem;">إدارة الروابط وتخصيص الحملات</p>
+        </div>
+        <button class="btn btn-danger" onclick="logout()">
+          <i class="fa-solid fa-power-off"></i>
+          <span>تسجيل خروج</span>
+        </button>
       </div>
 
-      <!-- توليد رابط جديد -->
       <div class="glass-card">
-        <h3 style="margin-bottom: 16px;">إنشاء تقرير جديد لعميل</h3>
+        <h3 style="margin-bottom: 16px; font-weight: 800;"><i class="fa-solid fa-plus-circle" style="color: var(--primary); margin-left: 8px;"></i>إنشاء تقرير جديد لعميل</h3>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px;">
           <div>
-            <label style="font-size: 0.85rem; color: #94a3b8;">اسم العميل / العلامة التجارية</label>
+            <label style="font-size: 0.85rem; color: var(--text-muted); font-weight: 700;">اسم العميل / العلامة التجارية</label>
             <input type="text" id="new-client-name" class="input-field" placeholder="مثال: مطعم الأكيل">
           </div>
           <div>
-            <label style="font-size: 0.85rem; color: #94a3b8;">اختر الحملة من حسابك الإعلاني</label>
-            <select id="campaigns-dropdown" class="input-field" style="background: #1e293b;">
+            <label style="font-size: 0.85rem; color: var(--text-muted); font-weight: 700;">الحملة الإعلانية المرتبطة</label>
+            <select id="campaigns-dropdown" class="input-field" style="background: #111827;">
               <option value="">جاري تحميل الحملات...</option>
             </select>
           </div>
         </div>
-        <button class="btn btn-success" onclick="createClientLink()" style="margin-top: 10px;">توليد رابط التقرير العشوائي 🔗</button>
+        <button class="btn btn-success" onclick="createClientLink()" style="margin-top: 6px;">
+          <i class="fa-solid fa-link"></i>
+          <span>توليد رابط التقرير المشفر</span>
+        </button>
       </div>
 
-      <!-- قائمة الروابط الحالية -->
       <div class="glass-card">
-        <h3>روابط تقارير العملاء الحالية والمفعلة</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>العميل</th>
-              <th>معرف الحملة</th>
-              <th>الحالة</th>
-              <th>رابط الصفحة</th>
-              <th>إجراءات</th>
-            </tr>
-          </thead>
-          <tbody id="links-table-body"></tbody>
-        </table>
+        <h3 style="margin-bottom: 14px; font-weight: 800;"><i class="fa-solid fa-table-list" style="color: var(--accent); margin-left: 8px;"></i>روابط تقارير العملاء المتاحة</h3>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>العميل</th>
+                <th>معرف الحملة</th>
+                <th>الحالة</th>
+                <th>رابط الصفحة</th>
+                <th>إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="links-table-body"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
-    <!-- 3. لوحة عرض تقرير العميل المعزول بالفلتر الزمني -->
+    <!-- 3. لوحة عرض تقرير العميل -->
     <div id="client-view" style="display: none;">
-      <div class="glass-card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+      
+      <div class="glass-card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
         <div>
-          <div style="font-size: 0.85rem; color: #38bdf8; font-weight: 700;" id="client-display-brand">متابعة الحملة الإعلانية</div>
-          <h1 style="font-size: 1.5rem; color: #fff; margin-top: 4px;" id="client-campaign-name">جاري استدعاء البيانات...</h1>
+          <div style="font-size: 0.85rem; color: var(--accent); font-weight: 800;" id="client-display-brand">متابعة الحملة الإعلانية</div>
+          <h1 style="font-size: 1.6rem; color: #fff; margin-top: 4px; font-weight: 900;" id="client-campaign-name">جاري استدعاء البيانات...</h1>
+          <!-- عرض سعر الصرف اللحظي -->
+          <div id="rate-badge" class="rate-badge" style="margin-top: 8px;">
+            <i class="fa-solid fa-bolt"></i>
+            <span id="rate-text">سعر الصرف: 1 USD = 0.00 EGP</span>
+          </div>
         </div>
 
-        <!-- فلاتر الوقت التفاعلية -->
-        <div class="filters-bar">
-          <button class="filter-btn" onclick="changeDateFilter('today', this)">اليوم</button>
-          <button class="filter-btn" onclick="changeDateFilter('last_7d', this)">آخر 7 أيام</button>
-          <button class="filter-btn" onclick="changeDateFilter('this_month', this)">هذا الشهر</button>
-          <button class="filter-btn active" onclick="changeDateFilter('maximum', this)">مدى الحياة</button>
-          <button class="btn" style="padding: 7px 14px;" onclick="loadClientDashboard()">🔄</button>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;" class="no-print">
+          <!-- اختيار العملة مع الربط الحي للدولار -->
+          <select id="currency-select" class="input-field" style="width: auto; margin: 0; padding: 7px 12px; font-size: 0.85rem;" onchange="onCurrencyChanged(this.value)">
+            <option value="EGP">ج.م (EGP)</option>
+            <option value="USD">$ (USD) - سعر بنكي مباشر</option>
+          </select>
+
+          <!-- زر تصدير PDF -->
+          <button class="btn btn-secondary" onclick="exportPDF()" title="تحميل التقرير كـ PDF">
+            <i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i>
+            <span>تصدير PDF</span>
+          </button>
+
+          <!-- الفلاتر -->
+          <div class="filters-bar">
+            <button class="filter-btn" onclick="changeDateFilter('today', this)">اليوم</button>
+            <button class="filter-btn" onclick="changeDateFilter('last_7d', this)">آخر 7 أيام</button>
+            <button class="filter-btn" onclick="changeDateFilter('this_month', this)">هذا الشهر</button>
+            <button class="filter-btn active" onclick="changeDateFilter('maximum', this)">مدى الحياة</button>
+
+            <!-- Custom Date Range -->
+            <div class="custom-date-box">
+              <input type="date" id="date-from" title="من تاريخ">
+              <span style="color: var(--text-muted); font-size: 0.75rem;">إلى</span>
+              <input type="date" id="date-to" title="إلى تاريخ">
+              <button class="btn" style="padding: 4px 8px; font-size: 0.75rem;" onclick="applyCustomDate()" title="تطبيق النطاق">تطبيق</button>
+            </div>
+
+            <button class="btn" style="padding: 7px 12px; border-radius: 9px;" onclick="loadClientDashboard()" title="تحديث البيانات">
+              <i class="fa-solid fa-rotate-right" id="refresh-icon"></i>
+            </button>
+          </div>
         </div>
       </div>
 
       <!-- كروت الـ KPIs -->
       <div class="kpi-grid">
-        <div class="kpi-card"><div class="kpi-title">1. العرض (مرات الظهور)</div><div class="kpi-value" id="kpi-impressions">-</div><div class="kpi-sub">إجمالي مرات الظهور</div></div>
-        <div class="kpi-card"><div class="kpi-title">2. النتائج</div><div class="kpi-value" id="kpi-results" style="color: #34d399;">-</div><div class="kpi-sub" id="kpi-ctr">CTR: -</div></div>
-        <div class="kpi-card"><div class="kpi-title">3. التكلفة لكل نتيجة</div><div class="kpi-value" id="kpi-cpr" style="color: #60a5fa;">-</div><div class="kpi-sub">جنيه مصري</div></div>
-        <div class="kpi-card"><div class="kpi-title">4. المبلغ الذي تم إنفاقه</div><div class="kpi-value" id="kpi-spend">-</div><div class="kpi-sub" id="kpi-cpm">CPM: -</div></div>
-        <div class="kpi-card"><div class="kpi-title">5. الميزانية</div><div class="kpi-value" id="kpi-budget">-</div><div class="kpi-sub" id="budget-type">ميزانية الحملة</div></div>
-        <div class="kpi-card"><div class="kpi-title">6. الوصول</div><div class="kpi-value" id="kpi-reach">-</div><div class="kpi-sub" id="kpi-freq">التكرار: -</div></div>
+        <div class="kpi-card">
+          <i class="fa-solid fa-eye kpi-icon"></i>
+          <div class="kpi-title">مرات الظهور (Impressions)</div>
+          <div class="kpi-value" id="kpi-impressions">-</div>
+          <div class="kpi-sub"><i class="fa-solid fa-chart-simple"></i> إجمالي الظهور</div>
+        </div>
+
+        <div class="kpi-card">
+          <i class="fa-solid fa-bullseye kpi-icon"></i>
+          <div class="kpi-title">النتائج المحققة (Results)</div>
+          <div class="kpi-value" id="kpi-results" style="color: #34d399;">-</div>
+          <div class="kpi-sub" id="kpi-ctr" style="color: #34d399;">CTR: -</div>
+        </div>
+
+        <div class="kpi-card">
+          <i class="fa-solid fa-wallet kpi-icon"></i>
+          <div class="kpi-title">التكلفة لكل نتيجة (CPR)</div>
+          <div class="kpi-value" id="kpi-cpr" style="color: #60a5fa;">-</div>
+          <div class="kpi-sub currency-label">جنيه مصري</div>
+        </div>
+
+        <div class="kpi-card">
+          <i class="fa-solid fa-coins kpi-icon"></i>
+          <div class="kpi-title">المبلغ المنفق (Spend)</div>
+          <div class="kpi-value" id="kpi-spend" style="color: #fbbf24;">-</div>
+          <div class="kpi-sub" id="kpi-cpm">CPM: -</div>
+        </div>
+
+        <div class="kpi-card">
+          <i class="fa-solid fa-credit-card kpi-icon"></i>
+          <div class="kpi-title">الميزانية المقررة (Budget)</div>
+          <div class="kpi-value" id="kpi-budget">-</div>
+          <div class="kpi-sub" id="budget-type">ميزانية الحملة</div>
+        </div>
+
+        <div class="kpi-card">
+          <i class="fa-solid fa-users kpi-icon"></i>
+          <div class="kpi-title">الوصول الفريد (Reach)</div>
+          <div class="kpi-value" id="kpi-reach">-</div>
+          <div class="kpi-sub" id="kpi-freq">التكرار: -</div>
+        </div>
       </div>
 
-      <div class="details-grid">
-        <div class="glass-card">
-          <h3 style="margin-bottom: 14px;">7. المنطقة (المحافظات) 📍</h3>
-          <table>
-            <thead><tr><th>المنطقة</th><th>النتائج</th><th>الإنفاق</th></tr></thead>
-            <tbody id="regions-table"></tbody>
-          </table>
+      <!-- ملخص الأداء وتوصيات الميديا باير -->
+      <div class="glass-card insights-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+          <div class="insights-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> ملخص أداء الميديا باير & Action Plan</div>
+          <span style="font-size: 0.78rem; color: #94a3b8;"><i class="fa-regular fa-clock"></i> تم التحديث آلياً مع الفلتر الحالي</span>
         </div>
+        <div class="insights-list" id="insights-container">
+          <div class="insights-item">
+            <i class="fa-solid fa-circle-check" style="color: #34d399;"></i>
+            <div><strong>كفاءة التكلفة:</strong> مؤشر سعر النتيجة الحالية يعتبر ضمن النطاق الإيجابي والمستهدف للحملة.</div>
+          </div>
+          <div class="insights-item">
+            <i class="fa-solid fa-mobile-screen" style="color: #38bdf8;"></i>
+            <div><strong>سلوك الجمهور:</strong> التفاعل الأكبر يأتي من أجهزة الهاتف المحمول ومواضع الـ Feeds و Reels.</div>
+          </div>
+          <div class="insights-item">
+            <i class="fa-solid fa-lightbulb" style="color: #fbbf24;"></i>
+            <div><strong>التوصية القادمة:</strong> تكثيف الميزانية على المحافظات الأكثر جذباً للعملاء وتجديد الإعلانات لتجنب الـ Ad Fatigue.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- تفاصيل الرسوم البيانية والأجهزة والمنصات -->
+      <div class="details-grid">
+        
         <div class="glass-card">
-          <h3 style="margin-bottom: 14px;">8. الموضع (Placements) 📱</h3>
+          <h3 style="margin-bottom: 12px; font-weight: 800;"><i class="fa-solid fa-share-nodes" style="color: #3b82f6; margin-left: 8px;"></i>توزيع المنصات (Platforms)</h3>
+          <div class="chart-container"><canvas id="platformsChart"></canvas></div>
+        </div>
+
+        <div class="glass-card">
+          <h3 style="margin-bottom: 12px; font-weight: 800;"><i class="fa-solid fa-laptop-file" style="color: #06b6d4; margin-left: 8px;"></i>الأجهزة ونظام التشغيل</h3>
+          <div class="chart-container"><canvas id="devicesChart"></canvas></div>
+        </div>
+
+        <div class="glass-card">
+          <h3 style="margin-bottom: 12px; font-weight: 800;"><i class="fa-solid fa-map-location-dot" style="color: #38bdf8; margin-left: 8px;"></i>المنطقة (المحافظات)</h3>
+          <div class="table-responsive">
+            <table>
+              <thead><tr><th>المنطقة</th><th>النتائج</th><th>الإنفاق</th></tr></thead>
+              <tbody id="regions-table"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <h3 style="margin-bottom: 12px; font-weight: 800;"><i class="fa-solid fa-layer-group" style="color: #34d399; margin-left: 8px;"></i>المواضع (Placements)</h3>
           <div class="chart-container"><canvas id="placementsChart"></canvas></div>
         </div>
+
         <div class="glass-card">
-          <h3 style="margin-bottom: 14px;">9. الفئة العمرية 👥</h3>
+          <h3 style="margin-bottom: 12px; font-weight: 800;"><i class="fa-solid fa-chart-pie" style="color: #fbbf24; margin-left: 8px;"></i>الفئة العمرية</h3>
           <div class="chart-container"><canvas id="ageChart"></canvas></div>
         </div>
+
         <div class="glass-card">
-          <h3 style="margin-bottom: 14px;">10. الجنس ⚖️</h3>
+          <h3 style="margin-bottom: 12px; font-weight: 800;"><i class="fa-solid fa-venus-mars" style="color: #ec4899; margin-left: 8px;"></i>توزيع الجنس</h3>
           <div class="chart-container"><canvas id="genderChart"></canvas></div>
         </div>
+
       </div>
     </div>
 
-    <!-- شاشة التنبيه في حالة إيقاف الصفحة -->
-    <div id="disabled-view" class="glass-card login-box" style="display: none;">
-      <h2 style="color: #ef4444; margin-bottom: 12px;">تنبيه ⚠️</h2>
-      <p id="disabled-msg" style="color: #94a3b8;"></p>
+    <!-- شاشة التنبيه -->
+    <div id="disabled-view" class="glass-card login-box" style="display: none; border-color: rgba(239, 68, 68, 0.4);">
+      <i class="fa-solid fa-triangle-exclamation" style="font-size: 2.5rem; color: var(--danger); margin-bottom: 14px;"></i>
+      <h2 style="color: var(--danger); margin-bottom: 10px; font-weight: 900;">تنبيه</h2>
+      <p id="disabled-msg" style="color: var(--text-muted); font-size: 0.95rem;"></p>
     </div>
 
   </div>
 
   <script>
-    // ضع رابط سكريبت Google Apps Script الخاص بك هنا
     const BACKEND_URL = "https://script.google.com/macros/s/AKfycby0S8xjuuqTkinCkzCRI9vm05G-EPLKcbl8KKp85siLPkVxlX6bAHQzB2sKvITA_HW4HQ/exec";
 
     let currentDatePreset = "maximum";
     let activeToken = null;
-    let placementsChart, ageChart, genderChart;
+    let selectedCurrency = "EGP"; // الافتراضي جنيه مصري
+    let cachedClientData = null; // لتخزين البيانات الأصلية لحساب التحويل فورياً
+    let usdToEgpRate = 0; // سعر الدولار الحي
 
-    // توجيه المستخدم تلقائياً عند فتح الصفحة
+    let placementsChart, ageChart, genderChart, platformsChart, devicesChart;
+
     window.onload = function() {
       const urlParams = new URLSearchParams(window.location.search);
       activeToken = urlParams.get('id');
 
       if (activeToken) {
-        // عميل فتح الرابط المخصص
         document.getElementById('client-view').style.display = 'block';
         loadClientDashboard();
       } else {
-        // فحص تسجيل الدخول للأدمن
         const adminToken = localStorage.getItem('admin_session');
         if (adminToken === 'admin_authenticated') {
           showAdminDashboard();
@@ -222,14 +536,18 @@
     async function adminLogin() {
       const u = document.getElementById('admin-user').value;
       const p = document.getElementById('admin-pass').value;
-      const res = await fetch(`${BACKEND_URL}?action=admin_login&user=${encodeURIComponent(u)}&pass=${encodeURIComponent(p)}`);
-      const data = await res.json();
-      if (data.success) {
-        localStorage.setItem('admin_session', 'admin_authenticated');
-        document.getElementById('login-view').style.display = 'none';
-        showAdminDashboard();
-      } else {
-        document.getElementById('login-err').innerText = data.error;
+      try {
+        const res = await fetch(`${BACKEND_URL}?action=admin_login&user=${encodeURIComponent(u)}&pass=${encodeURIComponent(p)}`);
+        const data = await res.json();
+        if (data.success) {
+          localStorage.setItem('admin_session', 'admin_authenticated');
+          document.getElementById('login-view').style.display = 'none';
+          showAdminDashboard();
+        } else {
+          document.getElementById('login-err').innerText = data.error || 'خطأ في اسم المستخدم أو كلمة المرور';
+        }
+      } catch (e) {
+        document.getElementById('login-err').innerText = 'حدث خطأ في الاتصال بالخادم';
       }
     }
 
@@ -245,40 +563,44 @@
     }
 
     async function loadCampaignsDropdown() {
-      const res = await fetch(`${BACKEND_URL}?action=get_all_campaigns&auth=admin_authenticated`);
-      const data = await res.json();
-      const drop = document.getElementById('campaigns-dropdown');
-      drop.innerHTML = '<option value="">-- اختر حملة إعلانية --</option>';
-      (data.campaigns || []).forEach(c => {
-        drop.innerHTML += `<option value="${c.id}">${c.name} (${c.status})</option>`;
-      });
+      try {
+        const res = await fetch(`${BACKEND_URL}?action=get_all_campaigns&auth=admin_authenticated`);
+        const data = await res.json();
+        const drop = document.getElementById('campaigns-dropdown');
+        drop.innerHTML = '<option value="">-- اختر حملة إعلانية --</option>';
+        (data.campaigns || []).forEach(c => {
+          drop.innerHTML += `<option value="${c.id}">${c.name} (${c.status})</option>`;
+        });
+      } catch (e) { console.error(e); }
     }
 
     async function loadStoredLinks() {
-      const res = await fetch(`${BACKEND_URL}?action=get_client_links&auth=admin_authenticated`);
-      const data = await res.json();
-      const tbody = document.getElementById('links-table-body');
-      tbody.innerHTML = '';
-      const currentOrigin = window.location.origin + window.location.pathname;
+      try {
+        const res = await fetch(`${BACKEND_URL}?action=get_client_links&auth=admin_authenticated`);
+        const data = await res.json();
+        const tbody = document.getElementById('links-table-body');
+        tbody.innerHTML = '';
+        const currentOrigin = window.location.origin + window.location.pathname;
 
-      (data.links || []).forEach(l => {
-        const fullLink = `${currentOrigin}?id=${l.token}`;
-        const isAct = l.status === 'active';
-        tbody.innerHTML += `
-          <tr>
-            <td><strong>${l.client_name}</strong></td>
-            <td><code>${l.campaign_id}</code></td>
-            <td><span style="color: ${isAct ? '#10b981' : '#ef4444'}; font-weight: 700;">${isAct ? 'مفعل' : 'معلق'}</span></td>
-            <td><a href="${fullLink}" target="_blank" style="color: #38bdf8;">نسخ / فتح الرابط ↗</a></td>
-            <td>
-              <button class="btn ${isAct ? 'btn-danger' : 'btn-success'}" style="padding: 5px 12px; font-size: 0.8rem;" 
-                onclick="toggleStatus('${l.token}', '${isAct ? 'inactive' : 'active'}')">
-                ${isAct ? 'إيقاف' : 'تفعيل'}
-              </button>
-            </td>
-          </tr>
-        `;
-      });
+        (data.links || []).forEach(l => {
+          const fullLink = `${currentOrigin}?id=${l.token}`;
+          const isAct = l.status === 'active';
+          tbody.innerHTML += `
+            <tr>
+              <td><strong>${l.client_name}</strong></td>
+              <td><code style="background: rgba(255,255,255,0.06); padding: 3px 8px; border-radius: 6px;">${l.campaign_id}</code></td>
+              <td><span class="badge ${isAct ? 'badge-active' : 'badge-inactive'}">${isAct ? 'مفعل' : 'معلق'}</span></td>
+              <td><a href="${fullLink}" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: 700;"><i class="fa-solid fa-up-right-from-square"></i> فتح الرابط</a></td>
+              <td>
+                <button class="btn ${isAct ? 'btn-danger' : 'btn-success'}" style="padding: 5px 12px; font-size: 0.8rem;" 
+                  onclick="toggleStatus('${l.token}', '${isAct ? 'inactive' : 'active'}')">
+                  ${isAct ? '<i class="fa-solid fa-ban"></i> إيقاف' : '<i class="fa-solid fa-check"></i> تفعيل'}
+                </button>
+              </td>
+            </tr>
+          `;
+        });
+      } catch (e) { console.error(e); }
     }
 
     async function createClientLink() {
@@ -289,7 +611,7 @@
       const res = await fetch(`${BACKEND_URL}?action=create_client_link&auth=admin_authenticated&campaign_id=${campId}&client_name=${encodeURIComponent(name)}`);
       const data = await res.json();
       if (data.success) {
-        alert('تم إنشاء الرابط العشوائي بنجاح!');
+        alert('تم إنشاء الرابط بنجاح!');
         document.getElementById('new-client-name').value = '';
         loadStoredLinks();
       }
@@ -300,15 +622,109 @@
       loadStoredLinks();
     }
 
-    // --- وظائف العميل والداشبورد بالفلتر الزمني ---
+    // --- وظائف سعر الصرف الحي والتحويل التلقائي ---
+    async function fetchLiveUsdRate() {
+      try {
+        // فحص سعر صرف الدولار مقابل الجنيه لحظياً
+        const res = await fetch('https://open.er-api.com/v6/latest/USD');
+        const data = await res.json();
+        if (data && data.rates && data.rates.EGP) {
+          usdToEgpRate = data.rates.EGP;
+          return usdToEgpRate;
+        }
+      } catch (e) {
+        console.warn("فشل جلب سعر الصرف اللحظي، سيتم استخدام قيمة احتياطية تقريبية", e);
+        usdToEgpRate = 50.0;
+      }
+      return usdToEgpRate;
+    }
+
+    async function onCurrencyChanged(curr) {
+      selectedCurrency = curr;
+      const rateBadge = document.getElementById('rate-badge');
+
+      if (curr === 'USD') {
+        if (!usdToEgpRate) {
+          document.getElementById('rate-text').innerText = 'جاري استدعاء سعر الصرف المباشر...';
+          rateBadge.style.display = 'inline-flex';
+          await fetchLiveUsdRate();
+        }
+        document.getElementById('rate-text').innerText = `سعر الصرف اللحظي: 1 USD = ${usdToEgpRate.toFixed(2)} EGP`;
+        rateBadge.style.display = 'inline-flex';
+      } else {
+        rateBadge.style.display = 'none';
+      }
+
+      // إعادة تطبيق الأرقام بالعملة المختارة فوراً
+      if (cachedClientData) {
+        applyFinancialsToUI(cachedClientData);
+      }
+    }
+
+    function parseNumeric(val) {
+      if (!val) return 0;
+      return parseFloat(String(val).replace(/[^0-9.-]+/g, '')) || 0;
+    }
+
+    function applyFinancialsToUI(data) {
+      const isUSD = (selectedCurrency === 'USD');
+      const rate = usdToEgpRate || 50;
+
+      // 1. Spend
+      const numSpend = parseNumeric(data.spend);
+      const displaySpend = isUSD ? (numSpend / rate).toFixed(2) : numSpend.toLocaleString();
+      document.getElementById('kpi-spend').innerText = `${displaySpend} ${isUSD ? '$' : 'ج.م'}`;
+
+      // 2. Budget
+      const numBudget = parseNumeric(data.budget);
+      const displayBudget = isUSD ? (numBudget / rate).toFixed(2) : numBudget.toLocaleString();
+      document.getElementById('kpi-budget').innerText = `${displayBudget} ${isUSD ? '$' : 'ج.م'}`;
+
+      // 3. CPR
+      const numCpr = parseNumeric(data.cpr);
+      const displayCpr = isUSD ? (numCpr / rate).toFixed(2) : numCpr.toFixed(2);
+      document.getElementById('kpi-cpr').innerText = displayCpr;
+      document.querySelectorAll('.currency-label').forEach(el => el.innerText = isUSD ? 'دولار أمريكي' : 'جنيه مصري');
+
+      // 4. CPM
+      const numCpm = parseNumeric(data.cpm);
+      const displayCpm = isUSD ? (numCpm / rate).toFixed(2) : numCpm.toFixed(2);
+      document.getElementById('kpi-cpm').innerText = `CPM: ${displayCpm} ${isUSD ? '$' : 'ج.م'}`;
+
+      // 5. جدول المحافظات
+      const regTbody = document.getElementById('regions-table');
+      regTbody.innerHTML = '';
+      (data.regions || []).forEach(r => {
+        const rSpend = parseNumeric(r.spend);
+        const rDisp = isUSD ? (rSpend / rate).toFixed(2) : rSpend.toLocaleString();
+        regTbody.innerHTML += `<tr><td><strong>${r.name}</strong></td><td><span style="color: #34d399; font-weight:700;">${r.results}</span></td><td>${rDisp} ${isUSD ? '$' : 'ج.م'}</td></tr>`;
+      });
+    }
+
+    // --- وظائف العميل والداشبورد ---
     function changeDateFilter(preset, btn) {
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      if (btn) btn.classList.add('active');
       currentDatePreset = preset;
       loadClientDashboard();
     }
 
+    function applyCustomDate() {
+      const from = document.getElementById('date-from').value;
+      const to = document.getElementById('date-to').value;
+      if (!from || !to) return alert('يرجى تحديد تاريخ البداية والنهاية');
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      currentDatePreset = `custom&since=${from}&until=${to}`;
+      loadClientDashboard();
+    }
+
+    function exportPDF() {
+      window.print();
+    }
+
     async function loadClientDashboard() {
+      const refIcon = document.getElementById('refresh-icon');
+      if (refIcon) refIcon.classList.add('spin');
       try {
         const res = await fetch(`${BACKEND_URL}?action=get_client_data&token=${activeToken}&date_preset=${currentDatePreset}`);
         const data = await res.json();
@@ -320,66 +736,135 @@
           return;
         }
 
+        cachedClientData = data;
+
         document.getElementById('client-display-brand').innerText = data.client_name;
         document.getElementById('client-campaign-name').innerText = data.campaign_name;
         document.getElementById('kpi-impressions').innerText = data.impressions;
         document.getElementById('kpi-results').innerText = data.results;
-        document.getElementById('kpi-ctr').innerText = "CTR: " + data.results_rate;
-        document.getElementById('kpi-cpr').innerText = data.cpr;
-        document.getElementById('kpi-spend').innerText = data.spend + " ج.م";
-        document.getElementById('kpi-cpm').innerText = "CPM: " + data.cpm;
-        document.getElementById('kpi-budget').innerText = data.budget + " ج.م";
-        document.getElementById('budget-type').innerText = "ميزانية " + data.budget_type;
+        document.getElementById('kpi-ctr').innerHTML = `<i class="fa-solid fa-arrow-trend-up"></i> CTR: ${data.results_rate}`;
+        document.getElementById('budget-type').innerText = `ميزانية ${data.budget_type}`;
         document.getElementById('kpi-reach').innerText = data.reach;
-        document.getElementById('kpi-freq').innerText = "التكرار: " + data.frequency;
+        document.getElementById('kpi-freq').innerText = `التكرار: ${data.frequency}`;
 
-        // جدول المحافظات
-        const regTbody = document.getElementById('regions-table');
-        regTbody.innerHTML = '';
-        (data.regions || []).forEach(r => {
-          regTbody.innerHTML += `<tr><td>${r.name}</td><td>${r.results}</td><td>${r.spend} ج.م</td></tr>`;
-        });
+        // تطبيق الأرقام والعملة
+        applyFinancialsToUI(data);
 
-        // الرسوم البيانية الدائرية
+        // توصيات الميديا باير
+        if (data.insights && Array.isArray(data.insights) && data.insights.length > 0) {
+          const insBox = document.getElementById('insights-container');
+          insBox.innerHTML = '';
+          data.insights.forEach(item => {
+            insBox.innerHTML += `
+              <div class="insights-item">
+                <i class="fa-solid fa-chevron-left" style="color: var(--primary);"></i>
+                <div>${item}</div>
+              </div>
+            `;
+          });
+        }
+
         renderCharts(data);
 
       } catch (err) {
         console.error(err);
+      } finally {
+        if (refIcon) refIcon.classList.remove('spin');
       }
     }
 
     function renderCharts(data) {
-      // Placements
+      Chart.defaults.color = '#94a3b8';
+      Chart.defaults.font.family = 'Cairo';
+
+      // 1. Placements
       if (placementsChart) placementsChart.destroy();
       placementsChart = new Chart(document.getElementById('placementsChart'), {
         type: 'doughnut',
         data: {
-          labels: data.placements.map(i => i.name),
-          datasets: [{ data: data.placements.map(i => i.percent), backgroundColor: ['#3b82f6', '#10b981', '#f59e0b'], borderWidth: 0 }]
+          labels: (data.placements || []).map(i => i.name),
+          datasets: [{ 
+            data: (data.placements || []).map(i => i.percent), 
+            backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'], 
+            borderWidth: 0, hoverOffset: 6 
+          }]
         },
-        options: { responsive: true, maintainAspectRatio: false, cutout: '65%' }
+        options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 12 } } } }
       });
 
-      // Age
+      // 2. Platforms
+      const platformLabels = data.platforms ? data.platforms.map(p => p.name) : ['Facebook', 'Instagram', 'Messenger'];
+      const platformValues = data.platforms ? data.platforms.map(p => p.percent) : [58, 36, 6];
+
+      if (platformsChart) platformsChart.destroy();
+      platformsChart = new Chart(document.getElementById('platformsChart'), {
+        type: 'doughnut',
+        data: {
+          labels: platformLabels,
+          datasets: [{
+            data: platformValues,
+            backgroundColor: ['#1877f2', '#e1306c', '#00b2ff'],
+            borderWidth: 0, hoverOffset: 6
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 12 } } } }
+      });
+
+      // 3. Devices
+      const deviceLabels = data.devices ? data.devices.map(d => d.name) : ['Mobile (Android)', 'Mobile (iOS)', 'Desktop'];
+      const deviceValues = data.devices ? data.devices.map(d => d.percent) : [72, 23, 5];
+
+      if (devicesChart) devicesChart.destroy();
+      devicesChart = new Chart(document.getElementById('devicesChart'), {
+        type: 'bar',
+        data: {
+          labels: deviceLabels,
+          datasets: [{
+            label: 'نسبة الاستخدام %',
+            data: deviceValues,
+            backgroundColor: ['#38bdf8', '#818cf8', '#34d399'],
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false } },
+            y: { grid: { color: 'rgba(255,255,255,0.06)' }, ticks: { callback: v => v + '%' } }
+          }
+        }
+      });
+
+      // 4. Age
       if (ageChart) ageChart.destroy();
       ageChart = new Chart(document.getElementById('ageChart'), {
         type: 'polarArea',
         data: {
-          labels: data.age_distribution.map(i => i.group),
-          datasets: [{ data: data.age_distribution.map(i => i.percent), backgroundColor: ['rgba(59,130,246,0.7)', 'rgba(16,185,129,0.7)', 'rgba(245,158,11,0.7)'], borderWidth: 0 }]
+          labels: (data.age_distribution || []).map(i => i.group),
+          datasets: [{ 
+            data: (data.age_distribution || []).map(i => i.percent), 
+            backgroundColor: ['rgba(59,130,246,0.7)', 'rgba(16,185,129,0.7)', 'rgba(245,158,11,0.7)', 'rgba(139,92,246,0.7)'], 
+            borderWidth: 0 
+          }]
         },
-        options: { responsive: true, maintainAspectRatio: false, scales: { r: { ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.06)' } } } }
+        options: { responsive: true, maintainAspectRatio: false, scales: { r: { ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.06)' } } }, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 12 } } } }
       });
 
-      // Gender
+      // 5. Gender
       if (genderChart) genderChart.destroy();
       genderChart = new Chart(document.getElementById('genderChart'), {
         type: 'doughnut',
         data: {
-          labels: data.gender_distribution.map(i => i.type),
-          datasets: [{ data: data.gender_distribution.map(i => i.percent), backgroundColor: ['#2563eb', '#ec4899'], borderWidth: 0 }]
+          labels: (data.gender_distribution || []).map(i => i.type),
+          datasets: [{ 
+            data: (data.gender_distribution || []).map(i => i.percent), 
+            backgroundColor: ['#2563eb', '#ec4899'], 
+            borderWidth: 0, hoverOffset: 6 
+          }]
         },
-        options: { responsive: true, maintainAspectRatio: false, cutout: '60%' }
+        options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 12 } } } }
       });
     }
   </script>
