@@ -76,6 +76,7 @@
     }
     .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(37, 99, 235, 0.5); }
     .btn:active { transform: translateY(0); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
     .btn-danger { background: linear-gradient(135deg, #ef4444, #b91c1c); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); }
     .btn-danger:hover { box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5); }
     .btn-success { background: linear-gradient(135deg, #10b981, #047857); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
@@ -142,9 +143,9 @@
       color: #fff;
       font-size: 0.8rem;
       outline: none;
+      color-scheme: dark;
     }
 
-    /* مؤشر سعر الصرف اللحظي */
     .rate-badge {
       display: none;
       align-items: center;
@@ -189,7 +190,6 @@
     .kpi-value { font-size: 1.85rem; font-weight: 900; color: #fff; margin-bottom: 4px; }
     .kpi-sub { font-size: 0.78rem; color: #64748b; font-weight: 600; display: flex; align-items: center; gap: 4px; }
 
-    /* صندوق الرؤى والتوصيات */
     .insights-card {
       background: linear-gradient(135deg, rgba(15, 23, 42, 0.85), rgba(30, 27, 75, 0.45));
       border: 1px solid rgba(99, 102, 241, 0.25);
@@ -234,10 +234,12 @@
     }
     .chart-container { position: relative; height: 240px; width: 100%; margin-top: 8px; }
 
-    .table-responsive { width: 100%; overflow-x: auto; }
+    .table-responsive { width: 100%; overflow-x: auto; max-height: 280px; }
     table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.9rem; margin-top: 8px; }
     th {
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba(13, 19, 39, 0.95);
+      position: sticky;
+      top: 0;
       text-align: right;
       color: var(--text-muted);
       padding: 12px 10px;
@@ -260,7 +262,7 @@
       .filters-bar, .no-print, .btn, .rate-badge { display: none !important; }
       .kpi-card { background: #f8fafc !important; border: 1px solid #cbd5e1 !important; color: #0f172a !important; box-shadow: none !important; }
       .kpi-value { color: #0f172a !important; }
-      th, td { color: #334155 !important; border-bottom: 1px solid #e2e8f0 !important; }
+      th, td { color: #334155 !important; border-bottom: 1px solid #e2e8f0 !important; background: #fff !important; }
       .insights-card { background: #f1f5f9 !important; border: 1px solid #cbd5e1 !important; }
       .insights-item { background: #fff !important; border: 1px solid #e2e8f0 !important; color: #1e293b !important; }
     }
@@ -276,13 +278,15 @@
       <h2 style="margin-bottom: 6px; font-weight: 800;">تسجيل دخول المدير</h2>
       <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">لوحة تحكم إدارة الحملات وتوليد الروابط</p>
       
-      <input type="text" id="admin-user" class="input-field" placeholder="اسم المستخدم">
-      <input type="password" id="admin-pass" class="input-field" placeholder="كلمة المرور">
-      
-      <button class="btn" style="width: 100%; margin-top: 6px;" onclick="adminLogin()">
-        <span>دخول لوحة التحكم</span>
-        <i class="fa-solid fa-arrow-left"></i>
-      </button>
+      <form onsubmit="event.preventDefault(); adminLogin();">
+        <input type="text" id="admin-user" class="input-field" placeholder="اسم المستخدم" autocomplete="username" required>
+        <input type="password" id="admin-pass" class="input-field" placeholder="كلمة المرور" autocomplete="current-password" required>
+        
+        <button type="submit" id="login-btn" class="btn" style="width: 100%; margin-top: 6px;">
+          <span>دخول لوحة التحكم</span>
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+      </form>
       <div id="login-err" style="color: #ef4444; font-size: 0.85rem; margin-top: 10px; font-weight: 700;"></div>
     </div>
 
@@ -291,7 +295,7 @@
       <div class="glass-card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
         <div>
           <h2 style="font-weight: 900; font-size: 1.45rem;">لوحة إدارة وتوليد تقارير العملاء ⚡</h2>
-          <p style="color: var(--text-muted); font-size: 0.85rem;">إدارة الروابط وتخصيص الحملات</p>
+          <p style="color: var(--text-muted); font-size: 0.85rem;">إدارة الروابط وتخصيص الحملات (الجلسة محمية وتنتهي تلقائياً بعد ساعتين)</p>
         </div>
         <button class="btn btn-danger" onclick="logout()">
           <i class="fa-solid fa-power-off"></i>
@@ -313,7 +317,7 @@
             </select>
           </div>
         </div>
-        <button class="btn btn-success" onclick="createClientLink()" style="margin-top: 6px;">
+        <button id="create-link-btn" class="btn btn-success" onclick="createClientLink()" style="margin-top: 6px;">
           <i class="fa-solid fa-link"></i>
           <span>توليد رابط التقرير المشفر</span>
         </button>
@@ -321,7 +325,7 @@
 
       <div class="glass-card">
         <h3 style="margin-bottom: 14px; font-weight: 800;"><i class="fa-solid fa-table-list" style="color: var(--accent); margin-left: 8px;"></i>روابط تقارير العملاء المتاحة</h3>
-        <div class="table-responsive">
+        <div class="table-responsive" style="max-height: none;">
           <table>
             <thead>
               <tr>
@@ -345,7 +349,6 @@
         <div>
           <div style="font-size: 0.85rem; color: var(--accent); font-weight: 800;" id="client-display-brand">متابعة الحملة الإعلانية</div>
           <h1 style="font-size: 1.6rem; color: #fff; margin-top: 4px; font-weight: 900;" id="client-campaign-name">جاري استدعاء البيانات...</h1>
-          <!-- عرض سعر الصرف اللحظي -->
           <div id="rate-badge" class="rate-badge" style="margin-top: 8px;">
             <i class="fa-solid fa-bolt"></i>
             <span id="rate-text">سعر الصرف: 1 USD = 0.00 EGP</span>
@@ -353,26 +356,22 @@
         </div>
 
         <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;" class="no-print">
-          <!-- اختيار العملة مع الربط الحي للدولار -->
           <select id="currency-select" class="input-field" style="width: auto; margin: 0; padding: 7px 12px; font-size: 0.85rem;" onchange="onCurrencyChanged(this.value)">
             <option value="EGP">ج.م (EGP)</option>
             <option value="USD">$ (USD) - سعر بنكي مباشر</option>
           </select>
 
-          <!-- زر تصدير PDF -->
           <button class="btn btn-secondary" onclick="exportPDF()" title="تحميل التقرير كـ PDF">
             <i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i>
             <span>تصدير PDF</span>
           </button>
 
-          <!-- الفلاتر -->
           <div class="filters-bar">
             <button class="filter-btn" onclick="changeDateFilter('today', this)">اليوم</button>
             <button class="filter-btn" onclick="changeDateFilter('last_7d', this)">آخر 7 أيام</button>
             <button class="filter-btn" onclick="changeDateFilter('this_month', this)">هذا الشهر</button>
             <button class="filter-btn active" onclick="changeDateFilter('maximum', this)">مدى الحياة</button>
 
-            <!-- Custom Date Range -->
             <div class="custom-date-box">
               <input type="date" id="date-from" title="من تاريخ">
               <span style="color: var(--text-muted); font-size: 0.75rem;">إلى</span>
@@ -432,31 +431,22 @@
         </div>
       </div>
 
-      <!-- ملخص الأداء وتوصيات الميديا باير -->
+      <!-- ملخص الأداء وتوصيات الميديا باير الذكية -->
       <div class="glass-card insights-card">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
           <div class="insights-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> ملخص أداء الميديا باير & Action Plan</div>
-          <span style="font-size: 0.78rem; color: #94a3b8;"><i class="fa-regular fa-clock"></i> تم التحديث آلياً مع الفلتر الحالي</span>
+          <span style="font-size: 0.78rem; color: #94a3b8;"><i class="fa-regular fa-clock"></i> تحليل ديناميكي بناءً على أرقام الفترة المحددة</span>
         </div>
         <div class="insights-list" id="insights-container">
           <div class="insights-item">
-            <i class="fa-solid fa-circle-check" style="color: #34d399;"></i>
-            <div><strong>كفاءة التكلفة:</strong> مؤشر سعر النتيجة الحالية يعتبر ضمن النطاق الإيجابي والمستهدف للحملة.</div>
-          </div>
-          <div class="insights-item">
-            <i class="fa-solid fa-mobile-screen" style="color: #38bdf8;"></i>
-            <div><strong>سلوك الجمهور:</strong> التفاعل الأكبر يأتي من أجهزة الهاتف المحمول ومواضع الـ Feeds و Reels.</div>
-          </div>
-          <div class="insights-item">
-            <i class="fa-solid fa-lightbulb" style="color: #fbbf24;"></i>
-            <div><strong>التوصية القادمة:</strong> تكثيف الميزانية على المحافظات الأكثر جذباً للعملاء وتجديد الإعلانات لتجنب الـ Ad Fatigue.</div>
+            <i class="fa-solid fa-spinner spin" style="color: #818cf8;"></i>
+            <div>جاري تحليل مؤشرات الأداء واستخراج التوصيات...</div>
           </div>
         </div>
       </div>
 
       <!-- تفاصيل الرسوم البيانية والأجهزة والمنصات -->
       <div class="details-grid">
-        
         <div class="glass-card">
           <h3 style="margin-bottom: 12px; font-weight: 800;"><i class="fa-solid fa-share-nodes" style="color: #3b82f6; margin-left: 8px;"></i>توزيع المنصات (Platforms)</h3>
           <div class="chart-container"><canvas id="platformsChart"></canvas></div>
@@ -491,12 +481,11 @@
           <h3 style="margin-bottom: 12px; font-weight: 800;"><i class="fa-solid fa-venus-mars" style="color: #ec4899; margin-left: 8px;"></i>توزيع الجنس</h3>
           <div class="chart-container"><canvas id="genderChart"></canvas></div>
         </div>
-
       </div>
     </div>
 
     <!-- شاشة التنبيه -->
-    <div id="disabled-view" class="glass-card login-box" style="display: none; border-color: rgba(239, 68, 68, 0.4);">
+    <div id="disabled-view" class="glass-card login-box" style="display: none; max-width: 480px; margin: 90px auto; text-align: center; border-color: rgba(239, 68, 68, 0.4);">
       <i class="fa-solid fa-triangle-exclamation" style="font-size: 2.5rem; color: var(--danger); margin-bottom: 14px;"></i>
       <h2 style="color: var(--danger); margin-bottom: 10px; font-weight: 900;">تنبيه</h2>
       <p id="disabled-msg" style="color: var(--text-muted); font-size: 0.95rem;"></p>
@@ -507,13 +496,35 @@
   <script>
     const BACKEND_URL = "https://script.google.com/macros/s/AKfycby0S8xjuuqTkinCkzCRI9vm05G-EPLKcbl8KKp85siLPkVxlX6bAHQzB2sKvITA_HW4HQ/exec";
 
-    let currentDatePreset = "maximum";
+    let currentQueryParams = "date_preset=maximum";
     let activeToken = null;
-    let selectedCurrency = "EGP"; // الافتراضي جنيه مصري
-    let cachedClientData = null; // لتخزين البيانات الأصلية لحساب التحويل فورياً
-    let usdToEgpRate = 0; // سعر الدولار الحي
+    let selectedCurrency = "EGP";
+    let cachedClientData = null;
+    let usdToEgpRate = 0;
 
     let placementsChart, ageChart, genderChart, platformsChart, devicesChart;
+
+    // دالة حماية ضد ثغرات XSS عند طباعة أي نص في HTML
+    function escapeHTML(str) {
+      if (str === null || str === undefined) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function getAdminToken() {
+      return sessionStorage.getItem('admin_session_token');
+    }
+
+    function handleSessionExpired() {
+      sessionStorage.removeItem('admin_session_token');
+      document.getElementById('admin-view').style.display = 'none';
+      document.getElementById('login-view').style.display = 'block';
+      document.getElementById('login-err').innerText = 'انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى';
+    }
 
     window.onload = function() {
       const urlParams = new URLSearchParams(window.location.search);
@@ -523,8 +534,8 @@
         document.getElementById('client-view').style.display = 'block';
         loadClientDashboard();
       } else {
-        const adminToken = localStorage.getItem('admin_session');
-        if (adminToken === 'admin_authenticated') {
+        const adminToken = getAdminToken();
+        if (adminToken && adminToken.startsWith('adm_')) {
           showAdminDashboard();
         } else {
           document.getElementById('login-view').style.display = 'block';
@@ -534,25 +545,35 @@
 
     // --- وظائف الأدمن ---
     async function adminLogin() {
-      const u = document.getElementById('admin-user').value;
+      const u = document.getElementById('admin-user').value.trim();
       const p = document.getElementById('admin-pass').value;
+      const btn = document.getElementById('login-btn');
+      const errBox = document.getElementById('login-err');
+
+      errBox.innerText = '';
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner spin"></i> جاري التحقق...';
+
       try {
         const res = await fetch(`${BACKEND_URL}?action=admin_login&user=${encodeURIComponent(u)}&pass=${encodeURIComponent(p)}`);
         const data = await res.json();
-        if (data.success) {
-          localStorage.setItem('admin_session', 'admin_authenticated');
+        if (data.success && data.token) {
+          sessionStorage.setItem('admin_session_token', data.token);
           document.getElementById('login-view').style.display = 'none';
           showAdminDashboard();
         } else {
-          document.getElementById('login-err').innerText = data.error || 'خطأ في اسم المستخدم أو كلمة المرور';
+          errBox.innerText = data.error || 'خطأ في اسم المستخدم أو كلمة المرور';
         }
       } catch (e) {
-        document.getElementById('login-err').innerText = 'حدث خطأ في الاتصال بالخادم';
+        errBox.innerText = 'حدث خطأ في الاتصال بالخادم';
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>دخول لوحة التحكم</span><i class="fa-solid fa-arrow-left"></i>';
       }
     }
 
     function logout() {
-      localStorage.removeItem('admin_session');
+      sessionStorage.removeItem('admin_session_token');
       location.reload();
     }
 
@@ -563,69 +584,112 @@
     }
 
     async function loadCampaignsDropdown() {
+      const auth = getAdminToken();
       try {
-        const res = await fetch(`${BACKEND_URL}?action=get_all_campaigns&auth=admin_authenticated`);
+        const res = await fetch(`${BACKEND_URL}?action=get_all_campaigns&auth=${encodeURIComponent(auth)}`);
         const data = await res.json();
+        if (data.error === "SESSION_EXPIRED") return handleSessionExpired();
+
         const drop = document.getElementById('campaigns-dropdown');
         drop.innerHTML = '<option value="">-- اختر حملة إعلانية --</option>';
         (data.campaigns || []).forEach(c => {
-          drop.innerHTML += `<option value="${c.id}">${c.name} (${c.status})</option>`;
+          const opt = document.createElement('option');
+          opt.value = c.id;
+          opt.textContent = `${c.name} (${c.status})`;
+          drop.appendChild(opt);
         });
       } catch (e) { console.error(e); }
     }
 
     async function loadStoredLinks() {
+      const auth = getAdminToken();
       try {
-        const res = await fetch(`${BACKEND_URL}?action=get_client_links&auth=admin_authenticated`);
+        const res = await fetch(`${BACKEND_URL}?action=get_client_links&auth=${encodeURIComponent(auth)}`);
         const data = await res.json();
+        if (data.error === "SESSION_EXPIRED") return handleSessionExpired();
+
         const tbody = document.getElementById('links-table-body');
         tbody.innerHTML = '';
         const currentOrigin = window.location.origin + window.location.pathname;
 
         (data.links || []).forEach(l => {
-          const fullLink = `${currentOrigin}?id=${l.token}`;
+          const safeToken = escapeHTML(l.token);
+          const safeCampId = escapeHTML(l.campaign_id);
+          const safeName = escapeHTML(l.client_name);
+          const fullLink = `${currentOrigin}?id=${encodeURIComponent(l.token)}`;
           const isAct = l.status === 'active';
-          tbody.innerHTML += `
-            <tr>
-              <td><strong>${l.client_name}</strong></td>
-              <td><code style="background: rgba(255,255,255,0.06); padding: 3px 8px; border-radius: 6px;">${l.campaign_id}</code></td>
-              <td><span class="badge ${isAct ? 'badge-active' : 'badge-inactive'}">${isAct ? 'مفعل' : 'معلق'}</span></td>
-              <td><a href="${fullLink}" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: 700;"><i class="fa-solid fa-up-right-from-square"></i> فتح الرابط</a></td>
-              <td>
-                <button class="btn ${isAct ? 'btn-danger' : 'btn-success'}" style="padding: 5px 12px; font-size: 0.8rem;" 
-                  onclick="toggleStatus('${l.token}', '${isAct ? 'inactive' : 'active'}')">
-                  ${isAct ? '<i class="fa-solid fa-ban"></i> إيقاف' : '<i class="fa-solid fa-check"></i> تفعيل'}
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>${safeName}</strong></td>
+            <td><code style="background: rgba(255,255,255,0.06); padding: 3px 8px; border-radius: 6px;">${safeCampId}</code></td>
+            <td><span class="badge ${isAct ? 'badge-active' : 'badge-inactive'}">${isAct ? 'مفعل' : 'معلق'}</span></td>
+            <td>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <a href="${fullLink}" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: none; font-weight: 700;">
+                  <i class="fa-solid fa-up-right-from-square"></i> فتح
+                </a>
+                <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.78rem;" onclick="copyClientLink('${fullLink}', this)">
+                  <i class="fa-regular fa-copy"></i> نسخ
                 </button>
-              </td>
-            </tr>
+              </div>
+            </td>
+            <td>
+              <button class="btn ${isAct ? 'btn-danger' : 'btn-success'}" style="padding: 5px 12px; font-size: 0.8rem;" 
+                onclick="toggleStatus('${safeToken}', '${isAct ? 'inactive' : 'active'}')">
+                ${isAct ? '<i class="fa-solid fa-ban"></i> إيقاف' : '<i class="fa-solid fa-check"></i> تفعيل'}
+              </button>
+            </td>
           `;
+          tbody.appendChild(tr);
         });
       } catch (e) { console.error(e); }
     }
 
+    function copyClientLink(link, btn) {
+      navigator.clipboard.writeText(link).then(() => {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-check" style="color: #34d399;"></i> تم النسخ';
+        setTimeout(() => btn.innerHTML = orig, 2000);
+      });
+    }
+
     async function createClientLink() {
-      const name = document.getElementById('new-client-name').value;
+      const auth = getAdminToken();
+      const name = document.getElementById('new-client-name').value.trim();
       const campId = document.getElementById('campaigns-dropdown').value;
+      const btn = document.getElementById('create-link-btn');
+
       if (!campId) return alert('برجاء اختيار حملة أولاً');
 
-      const res = await fetch(`${BACKEND_URL}?action=create_client_link&auth=admin_authenticated&campaign_id=${campId}&client_name=${encodeURIComponent(name)}`);
-      const data = await res.json();
-      if (data.success) {
-        alert('تم إنشاء الرابط بنجاح!');
-        document.getElementById('new-client-name').value = '';
-        loadStoredLinks();
+      btn.disabled = true;
+      try {
+        const res = await fetch(`${BACKEND_URL}?action=create_client_link&auth=${encodeURIComponent(auth)}&campaign_id=${encodeURIComponent(campId)}&client_name=${encodeURIComponent(name)}`);
+        const data = await res.json();
+        if (data.error === "SESSION_EXPIRED") return handleSessionExpired();
+
+        if (data.success) {
+          document.getElementById('new-client-name').value = '';
+          loadStoredLinks();
+        } else {
+          alert(data.error || 'حدث خطأ');
+        }
+      } finally {
+        btn.disabled = false;
       }
     }
 
     async function toggleStatus(token, nextStatus) {
-      await fetch(`${BACKEND_URL}?action=toggle_link_status&auth=admin_authenticated&token=${token}&status=${nextStatus}`);
+      const auth = getAdminToken();
+      const res = await fetch(`${BACKEND_URL}?action=toggle_link_status&auth=${encodeURIComponent(auth)}&token=${encodeURIComponent(token)}&status=${encodeURIComponent(nextStatus)}`);
+      const data = await res.json();
+      if (data.error === "SESSION_EXPIRED") return handleSessionExpired();
       loadStoredLinks();
     }
 
     // --- وظائف سعر الصرف الحي والتحويل التلقائي ---
     async function fetchLiveUsdRate() {
       try {
-        // فحص سعر صرف الدولار مقابل الجنيه لحظياً
         const res = await fetch('https://open.er-api.com/v6/latest/USD');
         const data = await res.json();
         if (data && data.rates && data.rates.EGP) {
@@ -633,7 +697,6 @@
           return usdToEgpRate;
         }
       } catch (e) {
-        console.warn("فشل جلب سعر الصرف اللحظي، سيتم استخدام قيمة احتياطية تقريبية", e);
         usdToEgpRate = 50.0;
       }
       return usdToEgpRate;
@@ -655,7 +718,6 @@
         rateBadge.style.display = 'none';
       }
 
-      // إعادة تطبيق الأرقام بالعملة المختارة فوراً
       if (cachedClientData) {
         applyFinancialsToUI(cachedClientData);
       }
@@ -670,42 +732,77 @@
       const isUSD = (selectedCurrency === 'USD');
       const rate = usdToEgpRate || 50;
 
-      // 1. Spend
       const numSpend = parseNumeric(data.spend);
       const displaySpend = isUSD ? (numSpend / rate).toFixed(2) : numSpend.toLocaleString();
       document.getElementById('kpi-spend').innerText = `${displaySpend} ${isUSD ? '$' : 'ج.م'}`;
 
-      // 2. Budget
       const numBudget = parseNumeric(data.budget);
       const displayBudget = isUSD ? (numBudget / rate).toFixed(2) : numBudget.toLocaleString();
       document.getElementById('kpi-budget').innerText = `${displayBudget} ${isUSD ? '$' : 'ج.م'}`;
 
-      // 3. CPR
       const numCpr = parseNumeric(data.cpr);
       const displayCpr = isUSD ? (numCpr / rate).toFixed(2) : numCpr.toFixed(2);
       document.getElementById('kpi-cpr').innerText = displayCpr;
       document.querySelectorAll('.currency-label').forEach(el => el.innerText = isUSD ? 'دولار أمريكي' : 'جنيه مصري');
 
-      // 4. CPM
       const numCpm = parseNumeric(data.cpm);
       const displayCpm = isUSD ? (numCpm / rate).toFixed(2) : numCpm.toFixed(2);
       document.getElementById('kpi-cpm').innerText = `CPM: ${displayCpm} ${isUSD ? '$' : 'ج.م'}`;
 
-      // 5. جدول المحافظات
       const regTbody = document.getElementById('regions-table');
       regTbody.innerHTML = '';
-      (data.regions || []).forEach(r => {
-        const rSpend = parseNumeric(r.spend);
-        const rDisp = isUSD ? (rSpend / rate).toFixed(2) : rSpend.toLocaleString();
-        regTbody.innerHTML += `<tr><td><strong>${r.name}</strong></td><td><span style="color: #34d399; font-weight:700;">${r.results}</span></td><td>${rDisp} ${isUSD ? '$' : 'ج.م'}</td></tr>`;
-      });
+      if (!data.regions || data.regions.length === 0) {
+        regTbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color: var(--text-muted);">لا توجد بيانات جغرافية متاحة لهذه الفترة</td></tr>';
+      } else {
+        data.regions.forEach(r => {
+          const rSpend = parseNumeric(r.spend);
+          const rDisp = isUSD ? (rSpend / rate).toFixed(2) : rSpend.toLocaleString();
+          regTbody.innerHTML += `<tr><td><strong>${escapeHTML(r.name)}</strong></td><td><span style="color: #34d399; font-weight:700;">${escapeHTML(r.results)}</span></td><td>${rDisp} ${isUSD ? '$' : 'ج.م'}</td></tr>`;
+        });
+      }
+    }
+
+    // توليد توصيات ذكية بناءً على الأرقام الفعلية للحملة
+    function generateSmartInsights(data) {
+      const insBox = document.getElementById('insights-container');
+      const ctr = parseNumeric(data.results_rate);
+      const freq = parseNumeric(data.frequency);
+      const results = Number(data.results) || 0;
+      const topRegion = (data.regions && data.regions.length > 0) ? escapeHTML(data.regions[0].name) : null;
+
+      let ctrAdvice = ctr >= 1.5
+        ? `<strong>جذب إعلاني قوي (CTR ${escapeHTML(data.results_rate)}):</strong> نسبة النقر مرتفعة وتعكس توافق التصميم والرسالة الإعلانية مع الجمهور المستهدف.`
+        : `<strong>فرصة لتحسين الجذب (CTR ${escapeHTML(data.results_rate)}):</strong> يُنصح باختبار تصميمات (Creatives) وعناوين جديدة لرفع معدل التفاعل وخفض تكلفة النتيجة.`;
+
+      let freqAdvice = freq > 2.8
+        ? `<strong>تنبيه تشبع الجمهور (Frequency ${escapeHTML(data.frequency)}):</strong> الإعلان ظهر لنفس الشخص عدة مرات؛ يفضل تجديد المحتوى الإعلاني لتجنب الـ Ad Fatigue.`
+        : `<strong>نطاق وصول صحي (Frequency ${escapeHTML(data.frequency)}):</strong> معدل التكرار متوازن ويسمح بالتوسع التدريجي في الميزانية دون إرهاق الجمهور.`;
+
+      let geoAdvice = topRegion && results > 0
+        ? `<strong>التركيز الجغرافي الأعلى:</strong> تتصدر <strong>${topRegion}</strong> قائمة النتائج المحققة (${results} نتيجة إجمالية)؛ يُوصى بتوجيه حصة أكبر من الميزانية إليها.`
+        : `<strong>توصية التحسين:</strong> استمرار جمع البيانات وتحليل أداء المواضع الأكثر تحويلاً لتركيز الإنفاق الإعلاني عليها.`;
+
+      insBox.innerHTML = `
+        <div class="insights-item">
+          <i class="fa-solid fa-bullseye" style="color: #34d399;"></i>
+          <div>${ctrAdvice}</div>
+        </div>
+        <div class="insights-item">
+          <i class="fa-solid fa-chart-line" style="color: #38bdf8;"></i>
+          <div>${freqAdvice}</div>
+        </div>
+        <div class="insights-item">
+          <i class="fa-solid fa-lightbulb" style="color: #fbbf24;"></i>
+          <div>${geoAdvice}</div>
+        </div>
+      `;
     }
 
     // --- وظائف العميل والداشبورد ---
     function changeDateFilter(preset, btn) {
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       if (btn) btn.classList.add('active');
-      currentDatePreset = preset;
+      currentQueryParams = `date_preset=${encodeURIComponent(preset)}`;
       loadClientDashboard();
     }
 
@@ -713,8 +810,9 @@
       const from = document.getElementById('date-from').value;
       const to = document.getElementById('date-to').value;
       if (!from || !to) return alert('يرجى تحديد تاريخ البداية والنهاية');
+      if (from > to) return alert('تاريخ البداية يجب أن يكون قبل تاريخ النهاية');
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      currentDatePreset = `custom&since=${from}&until=${to}`;
+      currentQueryParams = `date_preset=custom&since=${encodeURIComponent(from)}&until=${encodeURIComponent(to)}`;
       loadClientDashboard();
     }
 
@@ -726,7 +824,7 @@
       const refIcon = document.getElementById('refresh-icon');
       if (refIcon) refIcon.classList.add('spin');
       try {
-        const res = await fetch(`${BACKEND_URL}?action=get_client_data&token=${activeToken}&date_preset=${currentDatePreset}`);
+        const res = await fetch(`${BACKEND_URL}?action=get_client_data&token=${encodeURIComponent(activeToken)}&${currentQueryParams}`);
         const data = await res.json();
 
         if (data.error) {
@@ -742,28 +840,13 @@
         document.getElementById('client-campaign-name').innerText = data.campaign_name;
         document.getElementById('kpi-impressions').innerText = data.impressions;
         document.getElementById('kpi-results').innerText = data.results;
-        document.getElementById('kpi-ctr').innerHTML = `<i class="fa-solid fa-arrow-trend-up"></i> CTR: ${data.results_rate}`;
+        document.getElementById('kpi-ctr').innerHTML = `<i class="fa-solid fa-arrow-trend-up"></i> CTR: ${escapeHTML(data.results_rate)}`;
         document.getElementById('budget-type').innerText = `ميزانية ${data.budget_type}`;
         document.getElementById('kpi-reach').innerText = data.reach;
         document.getElementById('kpi-freq').innerText = `التكرار: ${data.frequency}`;
 
-        // تطبيق الأرقام والعملة
         applyFinancialsToUI(data);
-
-        // توصيات الميديا باير
-        if (data.insights && Array.isArray(data.insights) && data.insights.length > 0) {
-          const insBox = document.getElementById('insights-container');
-          insBox.innerHTML = '';
-          data.insights.forEach(item => {
-            insBox.innerHTML += `
-              <div class="insights-item">
-                <i class="fa-solid fa-chevron-left" style="color: var(--primary);"></i>
-                <div>${item}</div>
-              </div>
-            `;
-          });
-        }
-
+        generateSmartInsights(data);
         renderCharts(data);
 
       } catch (err) {
@@ -785,16 +868,16 @@
           labels: (data.placements || []).map(i => i.name),
           datasets: [{ 
             data: (data.placements || []).map(i => i.percent), 
-            backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'], 
+            backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4'], 
             borderWidth: 0, hoverOffset: 6 
           }]
         },
         options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 12 } } } }
       });
 
-      // 2. Platforms
-      const platformLabels = data.platforms ? data.platforms.map(p => p.name) : ['Facebook', 'Instagram', 'Messenger'];
-      const platformValues = data.platforms ? data.platforms.map(p => p.percent) : [58, 36, 6];
+      // 2. Platforms (تستخدم البيانات الحقيقية من ميتا إن وجدت)
+      const platformLabels = (data.platforms && data.platforms.length) ? data.platforms.map(p => p.name) : ['Facebook', 'Instagram', 'Messenger'];
+      const platformValues = (data.platforms && data.platforms.length) ? data.platforms.map(p => p.percent) : [58, 36, 6];
 
       if (platformsChart) platformsChart.destroy();
       platformsChart = new Chart(document.getElementById('platformsChart'), {
@@ -803,16 +886,16 @@
           labels: platformLabels,
           datasets: [{
             data: platformValues,
-            backgroundColor: ['#1877f2', '#e1306c', '#00b2ff'],
+            backgroundColor: ['#1877f2', '#e1306c', '#00b2ff', '#10b981'],
             borderWidth: 0, hoverOffset: 6
           }]
         },
         options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 12 } } } }
       });
 
-      // 3. Devices
-      const deviceLabels = data.devices ? data.devices.map(d => d.name) : ['Mobile (Android)', 'Mobile (iOS)', 'Desktop'];
-      const deviceValues = data.devices ? data.devices.map(d => d.percent) : [72, 23, 5];
+      // 3. Devices (تستخدم البيانات الحقيقية من ميتا إن وجدت)
+      const deviceLabels = (data.devices && data.devices.length) ? data.devices.map(d => d.name) : ['Mobile (Android)', 'Mobile (iOS)', 'Desktop'];
+      const deviceValues = (data.devices && data.devices.length) ? data.devices.map(d => d.percent) : [72, 23, 5];
 
       if (devicesChart) devicesChart.destroy();
       devicesChart = new Chart(document.getElementById('devicesChart'), {
@@ -822,7 +905,7 @@
           datasets: [{
             label: 'نسبة الاستخدام %',
             data: deviceValues,
-            backgroundColor: ['#38bdf8', '#818cf8', '#34d399'],
+            backgroundColor: ['#38bdf8', '#818cf8', '#34d399', '#fbbf24', '#f472b6'],
             borderRadius: 8
           }]
         },
@@ -845,7 +928,7 @@
           labels: (data.age_distribution || []).map(i => i.group),
           datasets: [{ 
             data: (data.age_distribution || []).map(i => i.percent), 
-            backgroundColor: ['rgba(59,130,246,0.7)', 'rgba(16,185,129,0.7)', 'rgba(245,158,11,0.7)', 'rgba(139,92,246,0.7)'], 
+            backgroundColor: ['rgba(59,130,246,0.7)', 'rgba(16,185,129,0.7)', 'rgba(245,158,11,0.7)', 'rgba(139,92,246,0.7)', 'rgba(236,72,153,0.7)'], 
             borderWidth: 0 
           }]
         },
